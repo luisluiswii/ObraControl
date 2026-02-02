@@ -7,11 +7,13 @@
 @endsection
 
 @section('content')
+    <div class="ct-card">
     <form action="{{ route('trabajadores.store') }}" method="POST">
         @csrf
 
         @include('trabajadores.form')
 
-        <button class="btn btn-primary">Guardar</button>
+        <button class="btn btn-ct-success">Guardar</button>
     </form>
+    </div>
 @endsection

@@ -8,9 +8,9 @@
 
 @section('content')
 
-    <a href="{{ route('trabajadores.index') }}" class="btn btn-secondary mb-3">Volver</a>
+    <a href="{{ route('trabajadores.index') }}" class="btn btn-ct-secondary mb-3">Volver</a>
 
-    <table id="tabla-papelera-trabajadores" class="table table-bordered table-striped">
+    <table id="tabla-papelera-trabajadores" class="table table-bordered table-striped ct-table">
         <thead>
             <tr>
                 <th>ID</th>
@@ -34,7 +34,7 @@
                               method="POST"
                               style="display:inline">
                             @csrf
-                            <button class="btn btn-success btn-sm">Restaurar</button>
+                            <button class="btn btn-ct-success btn-sm">Restaurar</button>
                         </form>
 
                         {{-- Eliminar definitivo --}}
@@ -44,7 +44,7 @@
                               style="display:inline">
                             @csrf
                             @method('DELETE')
-                            <button class="btn btn-danger btn-sm">Eliminar Definitivo</button>
+                            <button class="btn btn-ct-danger btn-sm">Eliminar Definitivo</button>
                         </form>
 
                     </td>

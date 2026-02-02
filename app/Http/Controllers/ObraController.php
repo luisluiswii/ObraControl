@@ -4,16 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\Obra;
 use App\Models\Trabajador;
+use App\Http\Requests\Obras\StoreObraRequest;
+use App\Http\Requests\Obras\UpdateObraRequest;
+use App\Services\ObraService;
 use Illuminate\Http\Request;
 
 class ObraController extends Controller
 {
+    public function __construct(
+        protected ObraService $service
+    ) {
+    }
     /* ============================================================
        LISTADO PRINCIPAL
     ============================================================ */
     public function index()
     {
-        $obras = Obra::all();
+        $obras = $this->service->listar();
         return view('obras.index', compact('obras'));
     }
 
@@ -28,15 +35,9 @@ class ObraController extends Controller
     /* ============================================================
        GUARDAR NUEVA OBRA
     ============================================================ */
-    public function store(Request $request)
+    public function store(StoreObraRequest $request)
     {
-        $request->validate([
-            'nombre' => 'required|string|max:255',
-            'direccion' => 'required|string|max:255',
-            'estado' => 'required|string|max:255',
-        ]);
-
-        Obra::create($request->all());
+        $this->service->crear($request->validated());
 
         return redirect()->route('obras.index')
                          ->with('success', 'Obra creada correctamente');
@@ -64,15 +65,9 @@ class ObraController extends Controller
     /* ============================================================
        ACTUALIZAR OBRA
     ============================================================ */
-    public function update(Request $request, Obra $obra)
+    public function update(UpdateObraRequest $request, Obra $obra)
     {
-        $request->validate([
-            'nombre' => 'required|string|max:255',
-            'direccion' => 'required|string|max:255',
-            'estado' => 'required|string|max:255',
-        ]);
-
-        $obra->update($request->all());
+        $this->service->actualizar($obra, $request->validated());
 
         return redirect()->route('obras.index')
                          ->with('success', 'Obra actualizada correctamente');
@@ -83,7 +78,7 @@ class ObraController extends Controller
     ============================================================ */
     public function destroy(Obra $obra)
     {
-        $obra->delete();
+        $this->service->eliminar($obra);
 
         return redirect()->route('obras.index')
                          ->with('success', 'Obra enviada a la papelera');
@@ -94,7 +89,7 @@ class ObraController extends Controller
     ============================================================ */
     public function papelera()
     {
-        $obras = Obra::onlyTrashed()->get();
+        $obras = $this->service->listarPapelera();
         return view('obras.papelera', compact('obras'));
     }
 
@@ -103,11 +98,15 @@ class ObraController extends Controller
     ============================================================ */
     public function restaurar($id)
     {
-        $obra = Obra::onlyTrashed()->where('id', $id)->firstOrFail();
-        $obra->restore();
+        $restaurado = $this->service->restaurar((int) $id);
 
         return redirect()->route('obras.papelera')
-                         ->with('success', 'Obra restaurada correctamente');
+                         ->with(
+                             $restaurado ? 'success' : 'error',
+                             $restaurado
+                                 ? 'Obra restaurada correctamente'
+                                 : 'No se pudo restaurar la obra'
+                         );
     }
 
     /* ============================================================
@@ -115,11 +114,15 @@ class ObraController extends Controller
     ============================================================ */
     public function eliminarDefinitivo($id)
     {
-        $obra = Obra::onlyTrashed()->where('id', $id)->firstOrFail();
-        $obra->forceDelete();
+        $eliminada = $this->service->eliminarDefinitivo((int) $id);
 
         return redirect()->route('obras.papelera')
-                         ->with('success', 'Obra eliminada definitivamente');
+                         ->with(
+                             $eliminada ? 'success' : 'error',
+                             $eliminada
+                                 ? 'Obra eliminada definitivamente'
+                                 : 'No se pudo eliminar la obra'
+                         );
     }
 
     /* ============================================================
@@ -128,10 +131,10 @@ class ObraController extends Controller
     public function asignar(Request $request, Obra $obra)
     {
         $request->validate([
-            'trabajador_id' => 'required|exists:trabajadors,id',
+            'trabajador_id' => 'required|exists:trabajadores,id',
         ]);
 
-        $obra->trabajadores()->attach($request->trabajador_id);
+        $this->service->asignarTrabajador($obra, (int) $request->trabajador_id);
 
         return redirect()->route('obras.show', $obra->id)
                          ->with('success', 'Trabajador asignado correctamente');
@@ -142,7 +145,7 @@ class ObraController extends Controller
     ============================================================ */
     public function quitarTrabajador(Obra $obra, Trabajador $trabajador)
     {
-        $obra->trabajadores()->detach($trabajador->id);
+        $this->service->quitarTrabajador($obra, (int) $trabajador->id);
 
         return redirect()->route('obras.show', $obra->id)
                          ->with('success', 'Trabajador eliminado de la obra');

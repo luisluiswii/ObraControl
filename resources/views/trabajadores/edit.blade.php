@@ -7,12 +7,14 @@
 @endsection
 
 @section('content')
+    <div class="ct-card">
     <form action="{{ route('trabajadores.update', $trabajador) }}" method="POST">
         @csrf
         @method('PUT')
 
         @include('trabajadores.form')
 
-        <button class="btn btn-primary">Actualizar</button>
+        <button class="btn btn-ct-success">Actualizar</button>
     </form>
+    </div>
 @endsection

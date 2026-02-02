@@ -7,9 +7,9 @@
 @endsection
 
 @section('content')
-    <a href="{{ route('trabajadores.create') }}" class="btn btn-primary mb-3">Nuevo Trabajador</a>
+    <a href="{{ route('trabajadores.create') }}" class="btn btn-ct-primary mb-3">Nuevo Empleado</a>
 
-    <table id="tabla-trabajadores" class="table table-bordered table-striped">
+    <table id="tabla-trabajadores" class="table table-bordered table-striped ct-table">
         <thead>
             <tr>
                 <th>ID</th>
@@ -30,8 +30,8 @@
                     <td>{{ $trabajador->salario_hora }}</td>
 
                     <td>
-                        <a href="{{ route('trabajadores.edit', $trabajador) }}" 
-                           class="btn btn-warning btn-sm">
+                                <a href="{{ route('trabajadores.edit', $trabajador) }}" 
+                                    class="btn btn-ct-warning btn-sm">
                             Editar
                         </a>
 
@@ -40,7 +40,7 @@
                               style="display:inline">
                             @csrf
                             @method('DELETE')
-                            <button class="btn btn-danger btn-sm"
+                            <button class="btn btn-ct-danger btn-sm"
                                     onclick="return confirm('¿Eliminar trabajador?')">
                                 Eliminar
                             </button>

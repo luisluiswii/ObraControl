@@ -3,13 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Trabajador;
-use Illuminate\Http\Request;
+use App\Services\TrabajadorService;
+use App\Http\Requests\Trabajadores\StoreTrabajadorRequest;
+use App\Http\Requests\Trabajadores\UpdateTrabajadorRequest;
 
 class TrabajadorController extends Controller
 {
+    public function __construct(
+        protected TrabajadorService $service
+    ) {
+    }
+
     public function index()
     {
-        $trabajadores = Trabajador::all();
+        $trabajadores = $this->service->listar();
         return view('trabajadores.index', compact('trabajadores'));
     }
 
@@ -18,27 +25,11 @@ class TrabajadorController extends Controller
         return view('trabajadores.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreTrabajadorRequest $request)
     {
-        $request->validate([
-            'nombre' => 'required',
-            'apellido' => 'required',
-            'dni' => 'required|unique:trabajadores',
-            'email' => 'required|email|unique:trabajadores',
-            'telefono' => 'required',
-            'puesto' => 'required',
-            'salario_hora' => 'required|numeric',
-        ]);
-
-        Trabajador::create($request->all());
-
+        $this->service->crear($request->validated());
         return redirect()->route('trabajadores.index')
             ->with('success', 'Trabajador creado correctamente.');
-    }
-
-    public function show(Trabajador $trabajador)
-    {
-        return view('trabajadores.show', compact('trabajador'));
     }
 
     public function edit(Trabajador $trabajador)
@@ -46,54 +37,50 @@ class TrabajadorController extends Controller
         return view('trabajadores.edit', compact('trabajador'));
     }
 
-    public function update(Request $request, Trabajador $trabajador)
+    public function update(UpdateTrabajadorRequest $request, Trabajador $trabajador)
     {
-        $request->validate([
-            'nombre' => 'required',
-            'apellido' => 'required',
-            'dni' => 'required|unique:trabajadores,dni,' . $trabajador->id,
-            'email' => 'required|email|unique:trabajadores,email,' . $trabajador->id,
-            'telefono' => 'required',
-            'puesto' => 'required',
-            'salario_hora' => 'required|numeric',
-        ]);
-
-        $trabajador->update($request->all());
-
+        $this->service->actualizar($trabajador, $request->validated());
         return redirect()->route('trabajadores.index')
             ->with('success', 'Trabajador actualizado correctamente.');
     }
 
     public function destroy(Trabajador $trabajador)
     {
-        $trabajador->delete();
-
+        $this->service->eliminar($trabajador);
         return redirect()->route('trabajadores.index')
-            ->with('success', 'Trabajador eliminado correctamente.');
+            ->with('success', 'Trabajador eliminado.');
     }
 
-    // PAPELERA
     public function papelera()
     {
-        $trabajadores = Trabajador::onlyTrashed()->get();
+        $trabajadores = $this->service->listarPapelera();
+
         return view('trabajadores.papelera', compact('trabajadores'));
     }
 
-    public function restaurar($id)
+    public function restaurar($trabajador)
     {
-        $trabajador = Trabajador::onlyTrashed()->findOrFail($id);
-        $trabajador->restore();
+        $restaurado = $this->service->restaurar((int) $trabajador);
 
         return redirect()->route('trabajadores.papelera')
-            ->with('success', 'Trabajador restaurado correctamente.');
+            ->with(
+                $restaurado ? 'success' : 'error',
+                $restaurado
+                    ? 'Trabajador restaurado correctamente.'
+                    : 'No se pudo restaurar el trabajador.'
+            );
     }
 
-    public function eliminarDefinitivo($id)
+    public function eliminarDefinitivo($trabajador)
     {
-        $trabajador = Trabajador::onlyTrashed()->findOrFail($id);
-        $trabajador->forceDelete();
+        $eliminado = $this->service->eliminarDefinitivo((int) $trabajador);
 
         return redirect()->route('trabajadores.papelera')
-            ->with('success', 'Trabajador eliminado definitivamente.');
+            ->with(
+                $eliminado ? 'success' : 'error',
+                $eliminado
+                    ? 'Trabajador eliminado definitivamente.'
+                    : 'No se pudo eliminar el trabajador.'
+            );
     }
 }

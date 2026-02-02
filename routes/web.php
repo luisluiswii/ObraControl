@@ -6,24 +6,71 @@ use App\Http\Controllers\TrabajadorController;
 use App\Http\Controllers\ObraController;
 use App\Http\Controllers\AsignacionController;
 use App\Http\Controllers\FichajeController;
+use App\Models\Fichaje;
+use App\Models\Obra;
+use App\Models\Trabajador;
 
 /*
 |--------------------------------------------------------------------------
-| Página de inicio personalizada
+| Página de inicio personalizada (Bienvenida ClearTime)
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () {
-    return view('intro');
-});
+    $obrasCount = Obra::count();
+    $trabajadoresCount = Trabajador::count();
+    $fichajesHoy = Fichaje::whereDate('fecha', now()->toDateString())->count();
+    $jornadasAbiertas = Fichaje::whereNull('hora_salida')->count();
 
-Auth::routes();
+    $trabajadores = Trabajador::orderBy('nombre')->get();
+    $obras = Obra::orderBy('nombre')->get();
+
+    return response()
+        ->view('bienvenido', compact(
+        'obrasCount',
+        'trabajadoresCount',
+        'fichajesHoy',
+        'jornadasAbiertas',
+        'trabajadores',
+        'obras'
+    ))
+        ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+        ->header('Pragma', 'no-cache')
+        ->header('Expires', '0');
+})->name('bienvenido');
+
+Route::get('/preview', function () {
+    $obrasCount = Obra::count();
+    $trabajadoresCount = Trabajador::count();
+    $fichajesHoy = Fichaje::whereDate('fecha', now()->toDateString())->count();
+    $jornadasAbiertas = Fichaje::whereNull('hora_salida')->count();
+
+    $trabajadores = Trabajador::orderBy('nombre')->get();
+    $obras = Obra::orderBy('nombre')->get();
+
+    return response()
+        ->view('bienvenido', compact(
+        'obrasCount',
+        'trabajadoresCount',
+        'fichajesHoy',
+        'jornadasAbiertas',
+        'trabajadores',
+        'obras'
+    ))
+        ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+        ->header('Pragma', 'no-cache')
+        ->header('Expires', '0');
+})->name('bienvenido.preview');
 
 /*
 |--------------------------------------------------------------------------
-| Dashboard principal
+| Redirección del Dashboard y del logo ClearTime
 |--------------------------------------------------------------------------
 */
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/home', function () {
+    return redirect()->route('bienvenido');
+})->name('home');
+
+Auth::routes();
 
 /*
 |--------------------------------------------------------------------------

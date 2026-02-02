@@ -40,7 +40,7 @@
             @break
 
             @case('vite')
-                @vite([config('adminlte.laravel_css_path', 'resources/css/app.css'), config('adminlte.laravel_js_path', 'resources/js/app.js')])
+                @vite(config('adminlte.laravel_js_path', 'resources/js/app.js'))
             @break
 
             @case('vite_js_only')

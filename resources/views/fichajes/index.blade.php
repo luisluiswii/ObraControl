@@ -9,8 +9,7 @@
 @section('content')
 
 {{-- FORMULARIO PARA INICIAR JORNADA --}}
-<div class="card mb-4">
-    <div class="card-body">
+<div class="ct-card mb-4">
 
         <form action="{{ route('jornadas.iniciar') }}" method="POST">
             @csrf
@@ -19,7 +18,7 @@
 
                 <div class="col-md-4">
                     <label>Trabajador</label>
-                    <select name="trabajador_id" class="form-control" required>
+                    <select name="trabajador_id" class="form-control ct-select" required>
                         @foreach($trabajadores as $t)
                             <option value="{{ $t->id }}">
                                 {{ $t->nombre }} {{ $t->apellido }}
@@ -30,7 +29,7 @@
 
                 <div class="col-md-4">
                     <label>Obra</label>
-                    <select name="obra_id" class="form-control" required>
+                    <select name="obra_id" class="form-control ct-select" required>
                         @foreach($obras as $o)
                             <option value="{{ $o->id }}">
                                 {{ $o->nombre }}
@@ -40,7 +39,7 @@
                 </div>
 
                 <div class="col-md-4 d-flex align-items-end">
-                    <button class="btn btn-success w-100">
+                    <button class="btn btn-ct-success w-100">
                         Iniciar jornada
                     </button>
                 </div>
@@ -48,12 +47,11 @@
             </div>
         </form>
 
-    </div>
 </div>
 
-<a href="{{ route('fichajes.create') }}" class="btn btn-primary mb-3">Nuevo Fichaje</a>
+<a href="{{ route('fichajes.create') }}" class="btn btn-ct-primary mb-3">Nuevo Fichaje</a>
 
-<table class="table table-bordered table-striped">
+<table class="table table-bordered table-striped ct-table">
     <thead>
         <tr>
             <th>Trabajador</th>
@@ -82,7 +80,7 @@
                     @if(!$f->hora_salida)
                         <form action="{{ route('jornadas.finalizar', $f->id) }}" method="POST" class="d-inline">
                             @csrf
-                            <button class="btn btn-warning btn-sm">
+                            <button class="btn btn-ct-warning btn-sm">
                                 Finalizar
                             </button>
                         </form>
@@ -92,7 +90,7 @@
                     <form action="{{ route('fichajes.destroy', $f->id) }}" method="POST" class="d-inline">
                         @csrf
                         @method('DELETE')
-                        <button class="btn btn-danger btn-sm">
+                        <button class="btn btn-ct-danger btn-sm">
                             Eliminar
                         </button>
                     </form>

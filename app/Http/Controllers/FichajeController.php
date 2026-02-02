@@ -5,29 +5,31 @@ namespace App\Http\Controllers;
 use App\Models\Fichaje;
 use App\Models\Trabajador;
 use App\Models\Obra;
-use Illuminate\Http\Request;
+use App\Services\FichajeService;
+use App\Http\Requests\Fichajes\IniciarJornadaRequest;
+use App\Http\Requests\Fichajes\StoreFichajeRequest;
 
 class FichajeController extends Controller
 {
+    public function __construct(
+        protected FichajeService $service
+    ) {
+    }
+
     /**
      * Mostrar listado de fichajes + selects para iniciar jornada + jornadas abiertas
      */
     public function index()
     {
         // Todos los fichajes
-        $fichajes = Fichaje::with(['trabajador', 'obra'])
-            ->orderBy('id', 'desc')
-            ->get();
+        $fichajes = $this->service->listar();
 
         // Selects para iniciar jornada
         $trabajadores = Trabajador::orderBy('nombre')->get();
         $obras = Obra::orderBy('nombre')->get();
 
         // Jornadas abiertas ahora mismo
-        $abiertas = Fichaje::with(['trabajador', 'obra'])
-            ->whereNull('hora_salida')
-            ->orderBy('hora_entrada', 'asc')
-            ->get();
+        $abiertas = $this->service->abiertas();
 
         return view('fichajes.index', compact('fichajes', 'trabajadores', 'obras', 'abiertas'));
     }
@@ -35,21 +37,12 @@ class FichajeController extends Controller
     /**
      * Iniciar una jornada (crear fichaje con hora_entrada)
      */
-    public function iniciarJornada(Request $request)
+    public function iniciarJornada(IniciarJornadaRequest $request)
     {
-        $request->validate([
-            'trabajador_id' => 'required|exists:trabajadores,id',
-            'obra_id' => 'required|exists:obras,id',
-        ]);
-
-        Fichaje::create([
-            'trabajador_id' => $request->trabajador_id,
-            'obra_id' => $request->obra_id,
-            'fecha' => date('Y-m-d'),
-            'hora_entrada' => date('H:i'),
-            'hora_salida' => null,
-            'horas_trabajadas' => null,
-        ]);
+        $this->service->iniciarJornada(
+            (int) $request->trabajador_id,
+            (int) $request->obra_id
+        );
 
         return back()->with('success', 'Jornada iniciada correctamente.');
     }
@@ -59,25 +52,14 @@ class FichajeController extends Controller
      */
     public function finalizarJornada($id)
     {
-        $fichaje = Fichaje::findOrFail($id);
+        $finalizada = $this->service->finalizarJornada((int) $id);
 
-        // Si ya está cerrada, no hacemos nada
-        if ($fichaje->hora_salida) {
-            return back()->with('success', 'Esta jornada ya estaba finalizada.');
-        }
-
-        $entrada = strtotime($fichaje->hora_entrada);
-        $salida = time();
-
-        // Calcular horas trabajadas
-        $horas = round(($salida - $entrada) / 3600, 2);
-
-        $fichaje->update([
-            'hora_salida' => date('H:i'),
-            'horas_trabajadas' => $horas,
-        ]);
-
-        return back()->with('success', 'Jornada finalizada correctamente.');
+        return back()->with(
+            $finalizada ? 'success' : 'info',
+            $finalizada
+                ? 'Jornada finalizada correctamente.'
+                : 'Esta jornada ya estaba finalizada.'
+        );
     }
 
     /**
@@ -94,17 +76,9 @@ class FichajeController extends Controller
     /**
      * Guardar fichaje manual
      */
-    public function store(Request $request)
+    public function store(StoreFichajeRequest $request)
     {
-        $request->validate([
-            'trabajador_id' => 'required|exists:trabajadores,id',
-            'obra_id' => 'required|exists:obras,id',
-            'fecha' => 'required|date',
-            'hora_entrada' => 'required',
-            'hora_salida' => 'nullable',
-        ]);
-
-        Fichaje::create($request->all());
+        $this->service->crearManual($request->validated());
 
         return redirect()->route('fichajes.index')
             ->with('success', 'Fichaje creado correctamente.');
@@ -115,10 +89,14 @@ class FichajeController extends Controller
      */
     public function destroy($id)
     {
-        $fichaje = Fichaje::findOrFail($id);
-        $fichaje->delete();
+        $eliminado = $this->service->eliminar((int) $id);
 
-        return back()->with('success', 'Fichaje eliminado.');
+        return back()->with(
+            $eliminado ? 'success' : 'error',
+            $eliminado
+                ? 'Fichaje eliminado.'
+                : 'No se pudo eliminar el fichaje.'
+        );
     }
 
     /**
@@ -128,10 +106,7 @@ class FichajeController extends Controller
     {
         $obras = Obra::orderBy('nombre')->get();
 
-        $jornadas = Fichaje::with(['trabajador', 'obra'])
-            ->orderBy('fecha', 'desc')
-            ->orderBy('hora_entrada', 'desc')
-            ->get();
+        $jornadas = $this->service->jornadas();
 
         return view('jornadas.index', compact('jornadas', 'obras'));
     }

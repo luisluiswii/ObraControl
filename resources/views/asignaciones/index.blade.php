@@ -8,9 +8,9 @@
 
 @section('content')
 
-<a href="{{ route('asignaciones.create') }}" class="btn btn-primary mb-3">Nueva Asignación</a>
+<a href="{{ route('asignaciones.create') }}" class="btn btn-ct-primary mb-3">Nueva Asignación</a>
 
-<table class="table table-bordered table-striped">
+<table class="table table-bordered table-striped ct-table">
     <thead>
         <tr>
             <th>Obra</th>
@@ -33,7 +33,7 @@
                     <form action="{{ route('asignaciones.destroy', $a->id) }}" method="POST">
                         @csrf
                         @method('DELETE')
-                        <button class="btn btn-danger btn-sm">Eliminar</button>
+                        <button class="btn btn-ct-danger btn-sm">Eliminar</button>
                     </form>
                 </td>
             </tr>

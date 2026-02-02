@@ -8,10 +8,10 @@
 
 @section('content')
 
-    <a href="{{ route('obras.create') }}" class="btn btn-primary mb-3">Crear Obra</a>
-    <a href="{{ route('obras.papelera') }}" class="btn btn-warning mb-3">Papelera</a>
+    <a href="{{ route('obras.create') }}" class="btn btn-ct-primary mb-3">Nueva obra</a>
+    <a href="{{ route('obras.papelera') }}" class="btn btn-ct-warning mb-3">Papelera</a>
 
-    <table id="tabla-obras" class="table table-bordered table-striped">
+    <table id="tabla-obras" class="table table-bordered table-striped ct-table">
         <thead>
             <tr>
                 <th>ID</th>
@@ -32,11 +32,11 @@
 
                         {{-- Ver --}}
                         <a href="{{ route('obras.show', $obra->id) }}"
-                           class="btn btn-info btn-sm">Ver</a>
+                                    class="btn btn-ct-secondary btn-sm">Ver</a>
 
                         {{-- Editar --}}
                         <a href="{{ route('obras.edit', $obra->id) }}"
-                           class="btn btn-warning btn-sm">Editar</a>
+                                    class="btn btn-ct-warning btn-sm">Editar</a>
 
                         {{-- Eliminar --}}
                         <form action="{{ route('obras.destroy', $obra->id) }}"
@@ -45,7 +45,7 @@
                               style="display:inline">
                             @csrf
                             @method('DELETE')
-                            <button class="btn btn-danger btn-sm">Eliminar</button>
+                            <button class="btn btn-ct-danger btn-sm">Eliminar</button>
                         </form>
 
                     </td>

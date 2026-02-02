@@ -8,7 +8,7 @@
 
 @section('content')
 
-<table class="table table-bordered table-striped">
+<table class="table table-bordered table-striped ct-table">
     <thead>
         <tr>
             <th>Trabajador</th>
@@ -35,7 +35,7 @@
                     @if(!$j->hora_salida)
                         <form action="{{ route('jornadas.finalizar', $j->id) }}" method="POST">
                             @csrf
-                            <button class="btn btn-warning btn-sm">Finalizar</button>
+                            <button class="btn btn-ct-warning btn-sm">Finalizar</button>
                         </form>
                     @endif
                 </td>
