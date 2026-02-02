@@ -13,9 +13,9 @@ return [
         'allowed' => true,
     ],
 
-    'logo' => '<b>Clear</b>Time',
-    'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-    'logo_img_class' => 'brand-image img-circle elevation-3',
+    'logo' => '<b>Clear</b>&nbsp;Time',
+    'logo_img' => 'img/logoClearTime.png',
+    'logo_img_class' => 'brand-image ct-brand-logo',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
     'logo_img_alt' => 'ClearTime Logo',
@@ -23,7 +23,7 @@ return [
     'auth_logo' => [
         'enabled' => false,
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+            'path' => 'img/logoClearTime.png',
             'alt' => 'Auth Logo',
             'class' => '',
             'width' => 50,
@@ -35,7 +35,7 @@ return [
         'enabled' => true,
         'mode' => 'fullscreen',
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+            'path' => 'img/logoClearTime.png',
             'alt' => 'ClearTime Preloader',
             'effect' => 'animation__shake',
             'width' => 60,
@@ -70,9 +70,9 @@ return [
     'classes_content_wrapper' => '',
     'classes_content_header' => '',
     'classes_content' => '',
-    'classes_sidebar' => 'sidebar-dark-primary elevation-4',
+    'classes_sidebar' => 'sidebar-light-primary elevation-0',
     'classes_sidebar_nav' => '',
-    'classes_topnav' => 'navbar-white navbar-light',
+    'classes_topnav' => 'navbar-light',
     'classes_topnav_nav' => 'navbar-expand',
     'classes_topnav_container' => 'container',
 

@@ -1,59 +1,286 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ClearTime - Sistema de Control de Obras y Fichajes
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="public/img/logoClearTime.png" width="120" alt="ClearTime Logo">
 </p>
 
-## About Laravel
+Sistema completo de gestión de obras, trabajadores y fichajes desarrollado con **Laravel 12** y diseño **ClearTime** (estética pastel moderna).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Características Principales
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Gestión de Trabajadores
+- CRUD completo de trabajadores con soft deletes
+- Papelera y restauración de trabajadores eliminados
+- Eliminación definitiva con confirmación
+- Asignación de trabajadores a múltiples obras
 
-## Learning Laravel
+### Gestión de Obras
+- CRUD completo de obras con soft deletes
+- Papelera y restauración de obras
+- Gestión de trabajadores asignados (agregar/quitar)
+- Tracking de fechas de asignación y finalización
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Sistema de Fichajes
+- Registro de entrada/salida con cálculo automático de horas
+- Validación robusta de tiempos (parseo flexible de formatos)
+- Visualización de historial completo de fichajes
+- Dashboard con KPIs y estadísticas
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Diseño ClearTime
+- Paleta pastel suave (amarillo crema, azul violeta, rosa)
+- Tipografías personalizadas: *Petrona* (serif) + *Tilt Warp* (display)
+- Interfaz AdminLTE con tema light personalizado
+- Componentes reutilizables (cards, KPIs, tablas, botones)
+- Login y autenticación con branding completo
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Tecnologías
 
-### Premium Partners
+- **Backend:** Laravel 12.48.1 (PHP 8.2+)
+- **Frontend:** Vite + Tailwind CSS + AdminLTE
+- **Base de datos:** MySQL (migraciones incluidas)
+- **Testing:** PHPUnit
+- **Assets:** Vite hot reload para desarrollo
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+## Instalación y Configuración
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Requisitos
+- PHP 8.2 o superior
+- Composer
+- Node.js 18+ y npm
+- MySQL/MariaDB
 
-## Code of Conduct
+### Setup rápido
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+# 1. Clonar el repositorio
+git clone <repo-url>
+cd ObraControl
 
-## Security Vulnerabilities
+# 2. Instalar dependencias y configurar entorno
+composer run setup
+# (equivale a: composer install + npm install + .env setup + key:generate + migrate)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# 3. Levantar el entorno de desarrollo
+composer run dev
+# Servidor Laravel: http://127.0.0.1:8000
+# Vite dev: http://127.0.0.1:5173
+```
 
-## License
+### Comandos útiles
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+# Levantar solo el servidor PHP
+php artisan serve
+
+# Levantar solo Vite (hot reload)
+npm run dev
+
+# Compilar assets para producción
+npm run build
+
+# Correr tests
+composer test
+
+# Limpiar cachés
+php artisan optimize:clear
+```
+
+---
+
+## Estructura del Proyecto
+
+```
+app/
+├── Http/
+│   ├── Controllers/       # Controladores (Trabajadores, Obras, Fichajes, Asignaciones)
+│   └── Requests/          # Form requests de validación
+├── Models/                # Eloquent models (Trabajador, Obra, Fichaje)
+├── Repositories/          # Capa de repositorios (interfaces + implementaciones)
+├── Services/              # Lógica de negocio (TrabajadorService, ObraService, FichajeService)
+└── View/Components/       # Componentes Blade reutilizables
+
+resources/
+├── css/
+│   └── app.css           # Tema ClearTime (variables, overrides AdminLTE)
+├── js/
+│   └── app.js            # Entry point de Vite
+├── sass/
+│   └── app.scss          # Bootstrap customizado
+└── views/
+    ├── vendor/adminlte/  # Templates AdminLTE personalizados (auth, page, master)
+    ├── trabajadores/     # Vistas CRUD trabajadores
+    ├── obras/            # Vistas CRUD obras
+    ├── fichajes/         # Vistas fichajes
+    └── asignaciones/     # Vistas asignaciones
+
+database/
+├── migrations/           # Migraciones (users, trabajadores, obras, fichajes, pivots)
+└── seeders/             # Seeders de ejemplo
+
+config/
+└── adminlte.php         # Configuración completa del menú y branding
+```
+
+---
+
+## Arquitectura y Patrones
+
+### Repository Pattern
+Capa de abstracción entre controladores y modelos:
+- `TrabajadorRepository`, `ObraRepository`, `FichajeRepository`, `AsignacionRepository`
+- Inyección de dependencias via Service Container
+- Interfaces registradas en `AppServiceProvider`
+
+### Service Layer
+Lógica de negocio centralizada:
+- `TrabajadorService`, `ObraService`, `FichajeService`, `AsignacionService`
+- Validaciones, cálculos y orquestación de repositorios
+
+### Soft Deletes
+- Modelos `Trabajador` y `Obra` usan soft deletes
+- Rutas específicas para papelera, restaurar y eliminar definitivamente
+
+### Relaciones Many-to-Many
+- Pivot `obra_trabajador` con campos `fecha_asignacion` y `fecha_fin`
+- Métodos en modelos: `Obra::trabajadores()`, `Trabajador::obras()`
+
+---
+
+## Personalización del Tema
+
+### Variables CSS (ClearTime)
+```css
+:root {
+  --ct-bg: #fff9dc;           /* Fondo amarillo crema */
+  --ct-card: #fffdf6;         /* Cards */
+  --ct-primary: #6a8cff;      /* Azul principal */
+  --ct-secondary: #c18cff;    /* Violeta */
+  --ct-accent: #ff9be3;       /* Rosa */
+  --ct-success: #35caa6;      /* Verde */
+  --ct-warning: #ffd980;      /* Amarillo */
+  --ct-danger: #ff7a86;       /* Rojo */
+  --ct-ink: #24233a;          /* Texto */
+  --ct-muted: #6b6986;        /* Texto secundario */
+}
+```
+
+### Componentes CSS
+- `.ct-card`, `.ct-kpi-card`, `.ct-hero`: containers con diseño ClearTime
+- `.btn-ct-primary`, `.btn-ct-secondary`: botones personalizados
+- `.ct-auth-page`, `.ct-auth-box`: login con estética ClearTime
+- `.ct-table`, `.ct-grid`: tablas y grids responsivos
+
+---
+
+## Dashboard y KPIs
+
+El dashboard muestra:
+- Número total de trabajadores activos
+- Número total de obras activas
+- Fichajes del día actual
+- Acciones rápidas (nueva obra, nuevo trabajador, registrar fichaje)
+
+---
+
+## Testing
+
+```bash
+# Correr todos los tests
+php artisan test
+
+# Correr tests específicos
+php artisan test --filter TrabajadorTest
+```
+
+---
+
+## Autenticación
+
+- Sistema de autenticación integrado con Laravel UI
+- Login/registro con diseño ClearTime
+- Vistas personalizadas en `resources/views/vendor/adminlte/auth/`
+
+---
+
+## Convenciones
+
+### Nomenclatura
+- **Controladores:** Resource controllers (ej. `TrabajadorController`)
+- **Rutas nombradas:** `trabajadores.index`, `obras.papelera`, `fichajes.create`
+- **Modelos:** Singular en PascalCase (`Trabajador`, `Obra`, `Fichaje`)
+- **Tablas:** Plural en snake_case (`trabajadores`, `obras`, `fichajes`)
+
+### Mass Assignment
+Todos los modelos usan `protected $fillable` para definir campos asignables en masa.
+
+---
+
+## Desarrollo
+
+### Levantar entorno completo
+```bash
+composer run dev
+```
+Este comando usa `concurrently` para levantar:
+- `php artisan serve` (puerto 8000)
+- `php artisan queue:listen` (workers)
+- `npm run dev` (Vite hot reload)
+
+### Workflow típico
+1. Modificar vistas/CSS en `resources/`
+2. Vite recarga automáticamente (hot reload)
+3. Modificar backend en `app/`
+4. Refrescar navegador para ver cambios PHP
+
+---
+
+## Dependencias Clave
+
+### Backend
+- `laravel/framework` (12.x)
+- `jeroennoten/laravel-adminlte` (AdminLTE para Laravel)
+- `laravel/ui` (scaffolding de autenticación)
+
+### Frontend
+- `vite` (bundler)
+- `laravel-vite-plugin` (integración Laravel)
+- `tailwindcss` (utilidades CSS)
+- AdminLTE (incluido via package)
+
+---
+
+## Troubleshooting
+
+### Assets no se actualizan
+```bash
+npm run build
+php artisan optimize:clear
+# Ctrl+Shift+R en el navegador (recarga dura)
+```
+
+### Errores de Vite manifest
+Verifica que `resources/js/app.js` importe `resources/css/app.css`:
+```javascript
+import '../css/app.css';
+```
+
+### Port ya en uso
+```bash
+# Cambiar puerto del servidor
+php artisan serve --port=8001
+
+# Cambiar puerto de Vite
+npm run dev -- --port 5174
+```
+
+---
+
+## Licencia
+
+Este proyecto está bajo licencia MIT.

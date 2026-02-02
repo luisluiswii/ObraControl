@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Fichaje;
 use App\Repositories\FichajeRepositoryInterface;
 use Carbon\Carbon;
+use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Database\Eloquent\Collection;
 
 class FichajeService
@@ -44,7 +45,7 @@ class FichajeService
             return false;
         }
 
-        $entrada = Carbon::createFromFormat('H:i', $fichaje->hora_entrada);
+            $entrada = $this->parseHoraEntrada($fichaje->hora_entrada);
         $salida = Carbon::now();
         $horas = round($salida->floatDiffInHours($entrada), 2);
 
@@ -60,6 +61,37 @@ class FichajeService
 
         return $this->repo->create($data);
     }
+
+        private function parseHoraEntrada(string $horaEntrada): Carbon
+        {
+            $raw = trim($horaEntrada);
+
+            try {
+                return Carbon::parse($raw);
+            } catch (InvalidFormatException) {
+                // continuar con fallback
+            }
+
+            $timeMatch = null;
+            if (preg_match('/\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?/', $raw, $match)) {
+                $timeMatch = $match[0];
+            } elseif (preg_match('/\d{2}:\d{2}/', $raw, $match)) {
+                $timeMatch = $match[0];
+            }
+
+            if ($timeMatch !== null) {
+                if (str_contains($timeMatch, '.')) {
+                    [$time, $micro] = explode('.', $timeMatch, 2);
+                    $micro = substr(str_pad($micro, 6, '0'), 0, 6);
+                    return Carbon::createFromFormat('H:i:s.u', $time . '.' . $micro);
+                }
+
+                $format = strlen($timeMatch) > 5 ? 'H:i:s' : 'H:i';
+                return Carbon::createFromFormat($format, $timeMatch);
+            }
+
+            return Carbon::parse($raw);
+        }
 
     public function eliminar(int $id): bool
     {

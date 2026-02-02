@@ -10,7 +10,7 @@
         $dashboardUrl = $dashboardUrl ? url($dashboardUrl) : '';
     }
 
-    $bodyClasses = "{$authType}-page";
+    $bodyClasses = "{$authType}-page ct-auth-page";
 
     if (! empty(config('adminlte.layout_dark_mode', null))) {
         $bodyClasses .= ' dark-mode';
@@ -18,6 +18,7 @@
 @endphp
 
 @section('adminlte_css')
+    @vite(['resources/js/app.js'])
     @stack('css')
     @yield('css')
 @stop
@@ -25,7 +26,7 @@
 @section('classes_body'){{ $bodyClasses }}@stop
 
 @section('body')
-    <div class="{{ $authType }}-box">
+    <div class="{{ $authType }}-box ct-auth-box">
 
         {{-- Logo --}}
         <div class="{{ $authType }}-logo">
@@ -56,11 +57,11 @@
         </div>
 
         {{-- Card Box --}}
-        <div class="card {{ config('adminlte.classes_auth_card', 'card-outline card-primary') }}">
+        <div class="card ct-card ct-auth-card {{ config('adminlte.classes_auth_card', 'card-outline card-primary') }}">
 
             {{-- Card Header --}}
             @hasSection('auth_header')
-                <div class="card-header {{ config('adminlte.classes_auth_header', '') }}">
+                <div class="card-header ct-auth-header {{ config('adminlte.classes_auth_header', '') }}">
                     <h3 class="card-title float-none text-center">
                         @yield('auth_header')
                     </h3>
@@ -68,13 +69,13 @@
             @endif
 
             {{-- Card Body --}}
-            <div class="card-body {{ $authType }}-card-body {{ config('adminlte.classes_auth_body', '') }}">
+            <div class="card-body ct-auth-body {{ $authType }}-card-body {{ config('adminlte.classes_auth_body', '') }}">
                 @yield('auth_body')
             </div>
 
             {{-- Card Footer --}}
             @hasSection('auth_footer')
-                <div class="card-footer {{ config('adminlte.classes_auth_footer', '') }}">
+                <div class="card-footer ct-auth-footer {{ config('adminlte.classes_auth_footer', '') }}">
                     @yield('auth_footer')
                 </div>
             @endif
