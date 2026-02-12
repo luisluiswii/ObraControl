@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('puesto');
             $table->decimal('salario_hora', 8, 2);
+            $table->string('foto')->nullable();
             $table->boolean('activo')->default(true);
             $table->timestamps();
             $table->softDeletes(); // ← BORRADO LÓGICO

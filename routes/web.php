@@ -1,3 +1,5 @@
+use App\Http\Controllers\ProductosController;
+Route::resource('productos', ProductosController::class);
 <?php
 
 use Illuminate\Support\Facades\Route;

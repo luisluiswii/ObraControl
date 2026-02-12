@@ -1,3 +1,7 @@
+    public function listarPaginado(int $perPage = 10)
+    {
+        return $this->repo->paginate($perPage);
+    }
 <?php
 
 namespace App\Services;

@@ -16,7 +16,7 @@ class TrabajadorController extends Controller
 
     public function index()
     {
-        $trabajadores = $this->service->listar();
+        $trabajadores = $this->service->listarPaginado();
         return view('trabajadores.index', compact('trabajadores'));
     }
 
@@ -27,7 +27,11 @@ class TrabajadorController extends Controller
 
     public function store(StoreTrabajadorRequest $request)
     {
-        $this->service->crear($request->validated());
+        $data = $request->validated();
+        if ($request->hasFile('foto')) {
+            $data['foto'] = $request->file('foto')->store('trabajadores', 'public');
+        }
+        $this->service->crear($data);
         return redirect()->route('trabajadores.index')
             ->with('success', 'Trabajador creado correctamente.');
     }
@@ -39,7 +43,11 @@ class TrabajadorController extends Controller
 
     public function update(UpdateTrabajadorRequest $request, Trabajador $trabajador)
     {
-        $this->service->actualizar($trabajador, $request->validated());
+        $data = $request->validated();
+        if ($request->hasFile('foto')) {
+            $data['foto'] = $request->file('foto')->store('trabajadores', 'public');
+        }
+        $this->service->actualizar($trabajador, $data);
         return redirect()->route('trabajadores.index')
             ->with('success', 'Trabajador actualizado correctamente.');
     }

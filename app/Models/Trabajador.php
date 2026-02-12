@@ -21,6 +21,7 @@ class Trabajador extends Model
         'email',
         'puesto',
         'salario_hora',
+        'foto',
     ];
 
     public function obras()

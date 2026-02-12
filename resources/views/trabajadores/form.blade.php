@@ -38,4 +38,14 @@
     <label>Salario por hora</label>
     <input type="number" step="0.01" name="salario_hora" class="form-control ct-input"
            value="{{ old('salario_hora', $trabajador->salario_hora ?? '') }}">
+ </div>
+
+<div class="form-group">
+    <label>Foto</label>
+    <input type="file" name="foto" class="form-control-file">
+    @if(isset($trabajador) && $trabajador->foto)
+        <div class="mt-2">
+            <img src="{{ asset('storage/' . $trabajador->foto) }}" alt="Foto actual" width="100">
+        </div>
+    @endif
 </div>

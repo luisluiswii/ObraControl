@@ -8,7 +8,7 @@
 
 @section('content')
     <div class="ct-card">
-    <form action="{{ route('trabajadores.store') }}" method="POST">
+    <form action="{{ route('trabajadores.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         @include('trabajadores.form')

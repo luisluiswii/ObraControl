@@ -12,7 +12,8 @@ class ProductosController extends Controller
      */
     public function index()
     {
-        //
+        $productos = Productos::orderBy('created_at', 'desc')->get();
+        return view('productos.index', compact('productos'));
     }
 
     /**
@@ -20,7 +21,7 @@ class ProductosController extends Controller
      */
     public function create()
     {
-        //
+        return view('productos.create');
     }
 
     /**
@@ -28,7 +29,16 @@ class ProductosController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+            'archivo_pdf' => 'nullable|file|mimes:pdf|max:2048',
+        ]);
+        if ($request->hasFile('archivo_pdf')) {
+            $data['archivo_pdf'] = $request->file('archivo_pdf')->store('productos', 'public');
+        }
+        Productos::create($data);
+        return redirect()->route('productos.index')->with('success', 'Producto creado correctamente.');
     }
 
     /**

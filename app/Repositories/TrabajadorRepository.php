@@ -1,3 +1,7 @@
+    public function paginate($perPage = 10)
+    {
+        return Trabajador::orderBy('created_at', 'desc')->paginate($perPage);
+    }
 <?php
 
 namespace App\Repositories;

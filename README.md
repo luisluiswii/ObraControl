@@ -1,3 +1,35 @@
+# Segunda Entrega – CRM en Laravel
+
+## Funcionalidades añadidas en esta entrega
+
+- **DataTables**: Listados avanzados con búsqueda y filtros en la vista de Trabajadores.
+- **Paginación**: Todos los listados principales usan paginación.
+- **Subida de imágenes**: Permite subir y mostrar la foto de cada trabajador.
+- **Subida y gestión de archivos**: Permite subir y descargar archivos PDF asociados a productos.
+- **Sistema de roles**: Usuarios con rol `admin` o `usuario`.
+- **Control de permisos**: Solo el admin puede eliminar, el usuario puede crear y editar.
+- **Validación de formularios**: Todos los formularios validan los datos correctamente.
+- **Uso de storage**: Las imágenes y archivos se almacenan en `storage/app/public` y se acceden vía `public/storage`.
+
+## Instalación y uso rápido (resumen)
+
+1. Clona el repositorio y sitúate en la rama `Segunda`.
+2. Instala dependencias: `composer install` y `npm install`.
+3. Configura `.env` y ejecuta `php artisan key:generate`.
+4. Ejecuta las migraciones: `php artisan migrate`.
+5. Crea el enlace de storage: `php artisan storage:link`.
+6. Compila los assets: `npm run build`.
+7. Inicia el servidor: `php artisan serve`.
+
+## Notas de roles y permisos
+- Accede con un usuario admin para ver todas las opciones (eliminar, etc.).
+- Los archivos subidos se almacenan en `storage/app/public`.
+- Los roles se gestionan en la tabla `users` (campo `role`).
+
+---
+
+Entrega lista para revisión y pruebas.
+
 # ClearTime - Sistema de Control de Obras y Fichajes
 
 <p align="center">

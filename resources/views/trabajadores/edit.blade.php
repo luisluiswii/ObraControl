@@ -8,7 +8,7 @@
 
 @section('content')
     <div class="ct-card">
-    <form action="{{ route('trabajadores.update', $trabajador) }}" method="POST">
+    <form action="{{ route('trabajadores.update', $trabajador) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 

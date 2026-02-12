@@ -7,7 +7,9 @@
 @endsection
 
 @section('content')
-    <a href="{{ route('trabajadores.create') }}" class="btn btn-ct-primary mb-3">Nuevo Empleado</a>
+    @if(auth()->user()->isAdmin() || auth()->user()->isUsuario())
+        <a href="{{ route('trabajadores.create') }}" class="btn btn-ct-primary mb-3">Nuevo Empleado</a>
+    @endif
 
     <table id="tabla-trabajadores" class="table table-bordered table-striped ct-table">
         <thead>
@@ -30,11 +32,12 @@
                     <td>{{ $trabajador->salario_hora }}</td>
 
                     <td>
-                                <a href="{{ route('trabajadores.edit', $trabajador) }}" 
-                                    class="btn btn-ct-warning btn-sm">
+                        <a href="{{ route('trabajadores.edit', $trabajador) }}" 
+                            class="btn btn-ct-warning btn-sm">
                             Editar
                         </a>
 
+                        @if(auth()->user()->isAdmin())
                         <form action="{{ route('trabajadores.destroy', $trabajador) }}" 
                               method="POST" 
                               style="display:inline">
@@ -45,11 +48,15 @@
                                 Eliminar
                             </button>
                         </form>
+                        @endif
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+    <div class="mt-3">
+        {{ $trabajadores->links() }}
+    </div>
 @endsection
 
 @section('js')

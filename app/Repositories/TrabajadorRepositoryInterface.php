@@ -1,3 +1,4 @@
+    public function paginate($perPage = 10);
 <?php
 
 namespace App\Repositories;
