@@ -8,7 +8,7 @@
 
 @section('content')
 
-    <a href="{{ route('trabajadores.index') }}" class="btn btn-ct-secondary mb-3">Volver</a>
+    <a href="{{ route('trabajadores.index') }}" class="btn btn-ct-secondary mb-3"><i class="fas fa-arrow-left ct-btn-icon" aria-hidden="true"></i>Volver</a>
 
     <table id="tabla-papelera-trabajadores" class="table table-bordered table-striped ct-table">
         <thead>
@@ -28,15 +28,18 @@
                     <td>{{ $trabajador->email }}</td>
                     <td>{{ $trabajador->puesto }}</td>
                     <td>
-
                         {{-- Restaurar --}}
                         <form action="{{ route('trabajadores.restaurar', $trabajador->id) }}"
                               method="POST"
                               style="display:inline">
                             @csrf
-                            <button class="btn btn-ct-success btn-sm">Restaurar</button>
+                            <button class="btn btn-ct-success btn-sm ct-btn-icon-only"
+                                    type="submit"
+                                    title="Restaurar"
+                                    aria-label="Restaurar">
+                                <i class="fas fa-undo" aria-hidden="true"></i>
+                            </button>
                         </form>
-
                         {{-- Eliminar definitivo --}}
                         <form action="{{ route('trabajadores.eliminarDefinitivo', $trabajador->id) }}"
                               method="POST"
@@ -44,14 +47,21 @@
                               style="display:inline">
                             @csrf
                             @method('DELETE')
-                            <button class="btn btn-ct-danger btn-sm">Eliminar Definitivo</button>
+                            <button class="btn btn-ct-danger btn-sm ct-btn-icon-only"
+                                    type="submit"
+                                    title="Eliminar definitivo"
+                                    aria-label="Eliminar definitivo">
+                                <i class="fas fa-trash" aria-hidden="true"></i>
+                            </button>
                         </form>
-
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+    <div class="mt-4">
+        {{ $trabajadores->links('vendor.pagination.default') }}
+    </div>
 
 @endsection
 

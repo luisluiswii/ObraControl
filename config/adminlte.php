@@ -95,10 +95,10 @@ return [
     'right_sidebar_scrollbar_auto_hide' => 'l',
 
     'use_route_url' => false,
-    'dashboard_url' => 'home',
+    'dashboard_url' => 'dashboard',
     'logout_url' => 'logout',
     'login_url' => 'login',
-    'register_url' => 'register',
+    'register_url' => false,
     'password_reset_url' => 'password/reset',
     'password_email_url' => 'password/email',
     'profile_url' => false,
@@ -130,18 +130,57 @@ return [
         // Dashboard
         [
             'text' => 'Dashboard',
-            'route' => 'home',
+            'route' => 'dashboard',
             'icon' => 'fas fa-fw fa-tachometer-alt',
         ],
 
-        // Gestión de Personal
-        ['header' => 'Gestión de Personal'],
+        // Administración (admin/superadmin) — agrupa panel + superadmin
         [
-            'text' => 'Empleados',
-            'icon' => 'fas fa-fw fa-users',
+            'text' => 'Administración',
+            'icon' => 'fas fa-fw fa-shield-alt',
+            'can' => 'viewGestion',
             'submenu' => [
                 [
-                    'text' => 'Listado',
+                    'text' => 'Gestión',
+                    'route' => 'gestion',
+                    'icon' => 'fas fa-fw fa-chart-line',
+                    'can' => 'viewGestion',
+                ],
+                [
+                    'text' => 'Usuarios CRM',
+                    'route' => 'usuarios.index',
+                    'icon' => 'fas fa-fw fa-user-shield',
+                    'can' => 'manageUsers',
+                ],
+            ],
+        ],
+
+        // Cuenta (todos)
+        [
+            'text' => 'Cuenta',
+            'icon' => 'fas fa-fw fa-user-circle',
+            'submenu' => [
+                [
+                    'text' => 'Perfil',
+                    'route' => 'perfil',
+                    'icon' => 'fas fa-fw fa-user',
+                ],
+                [
+                    'text' => 'Documentos',
+                    'route' => 'documentos.index',
+                    'icon' => 'fas fa-fw fa-folder-open',
+                ],
+            ],
+        ],
+
+        // Personal (admin/superadmin)
+        [
+            'text' => 'Personal',
+            'icon' => 'fas fa-fw fa-users',
+            'can' => 'viewGestion',
+            'submenu' => [
+                [
+                    'text' => 'Empleados',
                     'route' => 'trabajadores.index',
                     'icon' => 'fas fa-fw fa-list',
                 ],
@@ -158,14 +197,14 @@ return [
             ],
         ],
 
-        // Obras / Centros
-        ['header' => 'Centros y Proyectos'],
+        // Proyectos (admin/superadmin)
         [
-            'text' => 'Obras',
+            'text' => 'Proyectos',
             'icon' => 'fas fa-fw fa-building',
+            'can' => 'viewGestion',
             'submenu' => [
                 [
-                    'text' => 'Listado',
+                    'text' => 'Obras',
                     'route' => 'obras.index',
                     'icon' => 'fas fa-fw fa-list',
                 ],
@@ -182,29 +221,22 @@ return [
             ],
         ],
 
-        // Operaciones
-        ['header' => 'Operaciones'],
+        // Operaciones (admin/superadmin)
         [
-            'text' => 'Asignaciones',
-            'icon' => 'fas fa-fw fa-project-diagram',
+            'text' => 'Operaciones',
+            'icon' => 'fas fa-fw fa-cogs',
+            'can' => 'viewGestion',
             'submenu' => [
                 [
-                    'text' => 'Listado',
+                    'text' => 'Asignaciones',
                     'route' => 'asignaciones.index',
-                    'icon' => 'fas fa-fw fa-list',
+                    'icon' => 'fas fa-fw fa-project-diagram',
                 ],
                 [
                     'text' => 'Nueva asignación',
                     'route' => 'asignaciones.create',
                     'icon' => 'fas fa-fw fa-plus',
                 ],
-            ],
-        ],
-
-        [
-            'text' => 'Fichajes',
-            'icon' => 'fas fa-fw fa-clock',
-            'submenu' => [
                 [
                     'text' => 'Registrar fichaje',
                     'route' => 'fichajes.create',
@@ -222,6 +254,8 @@ return [
                 ],
             ],
         ],
+
+        // Documentos en menú principal (arriba)
     ],
 
     'filters' => [

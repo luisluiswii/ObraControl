@@ -13,7 +13,7 @@
 
         @include('trabajadores.form')
 
-        <button class="btn btn-ct-success">Guardar</button>
+        <button class="btn btn-ct-success"><i class="fas fa-save ct-btn-icon" aria-hidden="true"></i>Guardar</button>
     </form>
     </div>
 @endsection

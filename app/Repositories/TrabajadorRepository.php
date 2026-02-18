@@ -1,7 +1,3 @@
-    public function paginate($perPage = 10)
-    {
-        return Trabajador::orderBy('created_at', 'desc')->paginate($perPage);
-    }
 <?php
 
 namespace App\Repositories;
@@ -11,9 +7,18 @@ use Illuminate\Database\Eloquent\Collection;
 
 class TrabajadorRepository implements TrabajadorRepositoryInterface
 {
+    public function onlyTrashedPaginate($perPage = 10)
+    {
+        return Trabajador::onlyTrashed()->orderBy('deleted_at', 'desc')->paginate($perPage);
+    }
     public function all(): Collection
     {
         return Trabajador::orderBy('created_at', 'desc')->get();
+    }
+
+    public function paginate($perPage = 10)
+    {
+        return Trabajador::orderBy('created_at', 'desc')->paginate($perPage);
     }
 
     public function create(array $data): Trabajador

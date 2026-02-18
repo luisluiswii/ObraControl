@@ -1,160 +1,138 @@
-use App\Http\Controllers\ProductosController;
-Route::resource('productos', ProductosController::class);
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\TrabajadorController;
-use App\Http\Controllers\ObraController;
+
 use App\Http\Controllers\AsignacionController;
+use App\Http\Controllers\DocumentosController;
 use App\Http\Controllers\FichajeController;
+use App\Http\Controllers\MiPanelController;
+use App\Http\Controllers\ObraController;
+use App\Http\Controllers\PerfilController;
+use App\Http\Controllers\TrabajadorController;
+use App\Http\Controllers\UsuariosController;
 use App\Models\Fichaje;
 use App\Models\Obra;
 use App\Models\Trabajador;
 
 /*
 |--------------------------------------------------------------------------
-| Página de inicio personalizada (Bienvenida ClearTime)
+| LANDING PÚBLICA
 |--------------------------------------------------------------------------
 */
+
 Route::get('/', function () {
-    $obrasCount = Obra::count();
-    $trabajadoresCount = Trabajador::count();
-    $fichajesHoy = Fichaje::whereDate('fecha', now()->toDateString())->count();
-    $jornadasAbiertas = Fichaje::whereNull('hora_salida')->count();
-
-    $trabajadores = Trabajador::orderBy('nombre')->get();
-    $obras = Obra::orderBy('nombre')->get();
-
-    return response()
-        ->view('bienvenido', compact(
-        'obrasCount',
-        'trabajadoresCount',
-        'fichajesHoy',
-        'jornadasAbiertas',
-        'trabajadores',
-        'obras'
-    ))
-        ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
-        ->header('Pragma', 'no-cache')
-        ->header('Expires', '0');
-})->name('bienvenido');
-
-Route::get('/preview', function () {
-    $obrasCount = Obra::count();
-    $trabajadoresCount = Trabajador::count();
-    $fichajesHoy = Fichaje::whereDate('fecha', now()->toDateString())->count();
-    $jornadasAbiertas = Fichaje::whereNull('hora_salida')->count();
-
-    $trabajadores = Trabajador::orderBy('nombre')->get();
-    $obras = Obra::orderBy('nombre')->get();
-
-    return response()
-        ->view('bienvenido', compact(
-        'obrasCount',
-        'trabajadoresCount',
-        'fichajesHoy',
-        'jornadasAbiertas',
-        'trabajadores',
-        'obras'
-    ))
-        ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
-        ->header('Pragma', 'no-cache')
-        ->header('Expires', '0');
-})->name('bienvenido.preview');
+    return view('public');
+})->name('public');
 
 /*
 |--------------------------------------------------------------------------
-| Redirección del Dashboard y del logo ClearTime
+| AUTH (SIN REGISTRO PÚBLICO)
 |--------------------------------------------------------------------------
 */
-Route::get('/home', function () {
-    return redirect()->route('bienvenido');
-})->name('home');
 
-Auth::routes();
+Auth::routes(['register' => false]);
 
 /*
 |--------------------------------------------------------------------------
-| PAPELERA TRABAJADORES
+| APP PRIVADA (TODO PROTEGIDO POR LOGIN)
 |--------------------------------------------------------------------------
 */
-Route::get('/trabajadores/papelera', [TrabajadorController::class, 'papelera'])
-    ->name('trabajadores.papelera');
 
-Route::post('/trabajadores/{trabajador}/restaurar', [TrabajadorController::class, 'restaurar'])
-    ->name('trabajadores.restaurar');
+Route::middleware(['auth', \App\Http\Middleware\EnsurePasswordChanged::class])->group(function () {
+    // Dashboard (admin ve el dashboard interno; usuario ve Mi Panel)
+    Route::get('/dashboard', [MiPanelController::class, 'dashboard'])->name('dashboard');
 
-Route::delete('/trabajadores/{trabajador}/eliminar-definitivo', [TrabajadorController::class, 'eliminarDefinitivo'])
-    ->name('trabajadores.eliminarDefinitivo');
+    // Panel de gestión solo para admin/superadmin
+    Route::get('/gestion', function () {
+        $user = auth()->user();
+        if (!$user || !$user->isAdmin()) {
+            return redirect()->route('dashboard')->with('error', 'No tienes acceso a la gestión.');
+        }
 
-/*
-|--------------------------------------------------------------------------
-| CRUD TRABAJADORES
-|--------------------------------------------------------------------------
-*/
-Route::resource('trabajadores', TrabajadorController::class)
-    ->parameters(['trabajadores' => 'trabajador']);
+        $obrasCount = Obra::count();
+        $trabajadoresCount = Trabajador::count();
+        $fichajesHoy = Fichaje::whereDate('fecha', now()->toDateString())->count();
+        $jornadasAbiertas = Fichaje::whereNull('hora_salida')->count();
 
-/*
-|--------------------------------------------------------------------------
-| PAPELERA OBRAS
-|--------------------------------------------------------------------------
-*/
-Route::get('/obras/papelera', [ObraController::class, 'papelera'])
-    ->name('obras.papelera');
+        return view('gestion', compact('obrasCount', 'trabajadoresCount', 'fichajesHoy', 'jornadasAbiertas'));
+    })->name('gestion');
 
-Route::post('/obras/{obra}/restaurar', [ObraController::class, 'restaurar'])
-    ->name('obras.restaurar');
+    Route::get('/gestion-general', function () {
+        $user = auth()->user();
+        if (!$user || !$user->isAdmin()) {
+            return redirect()->route('dashboard')->with('error', 'No tienes acceso a la gestión general.');
+        }
 
-Route::delete('/obras/{obra}/eliminar-definitivo', [ObraController::class, 'eliminarDefinitivo'])
-    ->name('obras.eliminarDefinitivo');
+        return redirect()->route('gestion');
+    })->name('gestion.general');
 
-/*
-|--------------------------------------------------------------------------
-| CRUD OBRAS
-|--------------------------------------------------------------------------
-*/
-Route::resource('obras', ObraController::class);
+    // Perfil + documentos
+    Route::get('/perfil', [PerfilController::class, 'show'])->name('perfil');
+    Route::post('/perfil/foto', [PerfilController::class, 'updatePhoto'])->name('perfil.foto');
+    Route::get('/perfil/password', [PerfilController::class, 'password'])->name('perfil.password');
+    Route::put('/perfil/password', [PerfilController::class, 'updatePassword'])->name('perfil.password.update');
 
-/*
-|--------------------------------------------------------------------------
-| QUITAR TRABAJADOR DE UNA OBRA
-|--------------------------------------------------------------------------
-*/
-Route::delete('/obras/{obra}/quitar/{trabajador}', [ObraController::class, 'quitarTrabajador'])
-    ->name('obras.quitarTrabajador');
+    Route::resource('documentos', DocumentosController::class)
+        ->only(['index', 'create', 'store', 'destroy']);
 
-/*
-|--------------------------------------------------------------------------
-| ASIGNACIONES
-|--------------------------------------------------------------------------
-*/
-Route::get('/asignaciones', [AsignacionController::class, 'index'])->name('asignaciones.index');
-Route::get('/asignaciones/create', [AsignacionController::class, 'create'])->name('asignaciones.create');
-Route::post('/asignaciones', [AsignacionController::class, 'store'])->name('asignaciones.store');
-Route::delete('/asignaciones/{id}', [AsignacionController::class, 'destroy'])->name('asignaciones.destroy');
+    // Superadmin: gestión de usuarios del CRM
+    Route::middleware('can:manageUsers')->group(function () {
+        Route::get('/usuarios', [UsuariosController::class, 'index'])->name('usuarios.index');
+            Route::post('/usuarios/sync', [UsuariosController::class, 'syncTrabajadores'])->name('usuarios.sync');
+        Route::put('/usuarios/{user}/rol', [UsuariosController::class, 'updateRole'])->name('usuarios.role');
+        Route::delete('/usuarios/{user}', [UsuariosController::class, 'destroy'])->name('usuarios.destroy');
+        Route::post('/usuarios/trabajador/{trabajador}', [UsuariosController::class, 'createFromTrabajador'])->name('usuarios.fromTrabajador');
+    });
 
-/*
-|--------------------------------------------------------------------------
-| FICHAJES
-|--------------------------------------------------------------------------
-*/
-Route::get('/fichajes', [FichajeController::class, 'index'])->name('fichajes.index');
-Route::get('/fichajes/create', [FichajeController::class, 'create'])->name('fichajes.create');
-Route::post('/fichajes', [FichajeController::class, 'store'])->name('fichajes.store');
-Route::delete('/fichajes/{id}', [FichajeController::class, 'destroy'])->name('fichajes.destroy');
+    // Usuario normal: mi jornada
+    Route::post('/mi-jornada/iniciar', [MiPanelController::class, 'iniciarMiJornada'])->name('mi-jornada.iniciar');
+    Route::post('/mi-jornada/finalizar', [MiPanelController::class, 'finalizarMiJornada'])->name('mi-jornada.finalizar');
 
-/*
-|--------------------------------------------------------------------------
-| JORNADAS (Panel / Iniciar / Finalizar)
-|--------------------------------------------------------------------------
-*/
-Route::get('/jornadas', [FichajeController::class, 'jornadas'])
-    ->name('jornadas.index');
+    // ADMIN: gestión de recursos
+    Route::middleware('can:viewGestion')->group(function () {
+        // Trabajadores (papelera + CRUD)
+        Route::get('/trabajadores/papelera', [TrabajadorController::class, 'papelera'])
+            ->name('trabajadores.papelera');
+        Route::post('/trabajadores/{trabajador}/restaurar', [TrabajadorController::class, 'restaurar'])
+            ->name('trabajadores.restaurar');
+        Route::delete('/trabajadores/{trabajador}/eliminar-definitivo', [TrabajadorController::class, 'eliminarDefinitivo'])
+            ->name('trabajadores.eliminarDefinitivo');
+        Route::resource('trabajadores', TrabajadorController::class)
+            ->parameters(['trabajadores' => 'trabajador']);
 
-Route::post('/jornadas/iniciar', [FichajeController::class, 'iniciarJornada'])
-    ->name('jornadas.iniciar');
+        // Obras (papelera + CRUD)
+        Route::get('/obras/papelera', [ObraController::class, 'papelera'])
+            ->name('obras.papelera');
+        Route::post('/obras/{obra}/restaurar', [ObraController::class, 'restaurar'])
+            ->name('obras.restaurar');
+        Route::delete('/obras/{obra}/eliminar-definitivo', [ObraController::class, 'eliminarDefinitivo'])
+            ->name('obras.eliminarDefinitivo');
+        Route::resource('obras', ObraController::class);
 
-Route::post('/jornadas/{id}/finalizar', [FichajeController::class, 'finalizarJornada'])
-    ->name('jornadas.finalizar');
+        // Quitar trabajador de una obra
+        Route::delete('/obras/{obra}/quitar/{trabajador}', [ObraController::class, 'quitarTrabajador'])
+            ->name('obras.quitarTrabajador');
+
+        // Asignaciones
+        Route::get('/asignaciones', [AsignacionController::class, 'index'])->name('asignaciones.index');
+        Route::get('/asignaciones/create', [AsignacionController::class, 'create'])->name('asignaciones.create');
+        Route::post('/asignaciones', [AsignacionController::class, 'store'])->name('asignaciones.store');
+        Route::delete('/asignaciones/{id}', [AsignacionController::class, 'destroy'])->name('asignaciones.destroy');
+
+        // Fichajes/Jornadas globales (admin)
+        Route::get('/fichajes', [FichajeController::class, 'index'])->name('fichajes.index');
+        Route::get('/fichajes/create', [FichajeController::class, 'create'])->name('fichajes.create');
+        Route::post('/fichajes', [FichajeController::class, 'store'])->name('fichajes.store');
+        Route::delete('/fichajes/{id}', [FichajeController::class, 'destroy'])->name('fichajes.destroy');
+        Route::get('/jornadas', [FichajeController::class, 'jornadas'])->name('jornadas.index');
+        Route::post('/jornadas/iniciar', [FichajeController::class, 'iniciarJornada'])->name('jornadas.iniciar');
+        Route::post('/jornadas/{id}/finalizar', [FichajeController::class, 'finalizarJornada'])->name('jornadas.finalizar');
+    });
+
+    // Compatibilidad: /home
+    Route::get('/home', function () {
+        return redirect()->route('dashboard');
+    })->name('home');
+});
+

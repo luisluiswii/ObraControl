@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface ObraRepositoryInterface
 {
+    public function paginate($perPage = 10);
+    public function onlyTrashedPaginate($perPage = 10);
     public function all(): Collection;
 
     public function create(array $data): Obra;

@@ -18,9 +18,10 @@ class ObraController extends Controller
     /* ============================================================
        LISTADO PRINCIPAL
     ============================================================ */
-    public function index()
+    public function index(Request $request)
     {
-        $obras = $this->service->listar();
+        $perPage = $request->input('per_page', 10);
+        $obras = $this->service->listar($perPage);
         return view('obras.index', compact('obras'));
     }
 
@@ -37,7 +38,15 @@ class ObraController extends Controller
     ============================================================ */
     public function store(StoreObraRequest $request)
     {
-        $this->service->crear($request->validated());
+        $data = $request->validated();
+
+        // Manejar carga de PDF si existe
+        if ($request->hasFile('pdf')) {
+            $pdfPath = $request->file('pdf')->store('obras_pdfs', 'public');
+            $data['pdf'] = $pdfPath;
+        }
+
+        $this->service->crear($data);
 
         return redirect()->route('obras.index')
                          ->with('success', 'Obra creada correctamente');
@@ -67,7 +76,15 @@ class ObraController extends Controller
     ============================================================ */
     public function update(UpdateObraRequest $request, Obra $obra)
     {
-        $this->service->actualizar($obra, $request->validated());
+        $data = $request->validated();
+
+        // Manejar carga de PDF si existe
+        if ($request->hasFile('pdf')) {
+            $pdfPath = $request->file('pdf')->store('obras_pdfs', 'public');
+            $data['pdf'] = $pdfPath;
+        }
+
+        $this->service->actualizar($obra, $data);
 
         return redirect()->route('obras.index')
                          ->with('success', 'Obra actualizada correctamente');
@@ -87,9 +104,10 @@ class ObraController extends Controller
     /* ============================================================
        PAPELERA (SOLO TRASHED)
     ============================================================ */
-    public function papelera()
+    public function papelera(\Illuminate\Http\Request $request)
     {
-        $obras = $this->service->listarPapelera();
+        $perPage = $request->input('per_page', 10);
+        $obras = $this->service->listarPapelera($perPage);
         return view('obras.papelera', compact('obras'));
     }
 

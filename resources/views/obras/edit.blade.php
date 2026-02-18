@@ -8,7 +8,19 @@
 
 @section('content')
     <div class="ct-card">
-    <form action="{{ route('obras.update', $obra) }}" method="POST">
+    <form action="{{ route('obras.update', $obra) }}" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Adjuntar PDF <span class="text-muted">(opcional, reemplaza el actual)</span></label>
+                    <input type="file" name="pdf" class="form-control-file" accept="application/pdf">
+                    <small class="form-text text-muted">Solo archivos PDF. Máx. 5MB.</small>
+                    @if ($obra->pdf)
+                        <div class="mt-2">
+                            <a href="{{ asset('storage/' . $obra->pdf) }}" target="_blank" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-eye"></i> Ver PDF actual
+                            </a>
+                        </div>
+                    @endif
+                </div>
         @csrf
         @method('PUT')
 
@@ -41,7 +53,7 @@
             </select>
         </div>
 
-        <button class="btn btn-ct-success">Actualizar</button>
+        <button class="btn btn-ct-success"><i class="fas fa-save ct-btn-icon" aria-hidden="true"></i>Actualizar</button>
     </form>
     </div>
 @endsection

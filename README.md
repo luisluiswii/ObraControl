@@ -1,34 +1,107 @@
-# Segunda Entrega – CRM en Laravel
+# Segunda Entrega – CRM en Laravel (Rama `Segunda`)
 
-## Funcionalidades añadidas en esta entrega
+Este repositorio contiene la **segunda entrega** del CRM en Laravel.
 
-- **DataTables**: Listados avanzados con búsqueda y filtros en la vista de Trabajadores.
-- **Paginación**: Todos los listados principales usan paginación.
-- **Subida de imágenes**: Permite subir y mostrar la foto de cada trabajador.
-- **Subida y gestión de archivos**: Permite subir y descargar archivos PDF asociados a productos.
-- **Sistema de roles**: Usuarios con rol `admin` o `usuario`.
-- **Control de permisos**: Solo el admin puede eliminar, el usuario puede crear y editar.
-- **Validación de formularios**: Todos los formularios validan los datos correctamente.
-- **Uso de storage**: Las imágenes y archivos se almacenan en `storage/app/public` y se acceden vía `public/storage`.
-
-## Instalación y uso rápido (resumen)
-
-1. Clona el repositorio y sitúate en la rama `Segunda`.
-2. Instala dependencias: `composer install` y `npm install`.
-3. Configura `.env` y ejecuta `php artisan key:generate`.
-4. Ejecuta las migraciones: `php artisan migrate`.
-5. Crea el enlace de storage: `php artisan storage:link`.
-6. Compila los assets: `npm run build`.
-7. Inicia el servidor: `php artisan serve`.
-
-## Notas de roles y permisos
-- Accede con un usuario admin para ver todas las opciones (eliminar, etc.).
-- Los archivos subidos se almacenan en `storage/app/public`.
-- Los roles se gestionan en la tabla `users` (campo `role`).
+- Versión original (referencia): https://github.com/luisluiswii/ObraControl
+- Versión a evaluar: **esta rama `Segunda`**
 
 ---
 
-Entrega lista para revisión y pruebas.
+## Checklist de requisitos (entrega)
+
+### ✅ Plugins externos (DataTables)
+- Se usa **DataTables** en listados con tabla para mejorar búsqueda/ordenación.
+
+### ✅ Paginación en `index`
+- Los listados principales usan `paginate()` y enlaces de paginación (`links()`).
+
+### ✅ Subida de imágenes
+- Foto de trabajador.
+- Foto de perfil del usuario.
+
+### ✅ Subida y gestión de archivos
+- PDF opcional por obra.
+- Documentos por usuario (PDF o imagen) con borrado y acceso desde `storage`.
+
+### ✅ Roles (Admin / Usuario)
+- Roles en `users.role`.
+- Además existe `superadmin` para administración avanzada (solo para pruebas y gestión completa).
+
+### ✅ Control de permisos en vistas
+- El menú y las rutas de administración están protegidos por **Gates/Policies**.
+
+---
+
+## Credenciales de prueba (para el profesor)
+
+> Nota: registro público deshabilitado. Se accede con estas cuentas.
+
+### Superadmin
+- Email: `superadmin.cleartime@gmail.com`
+- Password: `SuperAdmin1234!`
+
+### Admin
+- Email: `admin@example.com`
+- Password: `Admin1234!`
+
+### Usuario
+- Email: `test@example.com`
+- Password: `Usuario1234!`
+
+---
+
+## Instalación (local)
+
+### Requisitos
+- PHP 8.2+
+- Composer
+- Node.js 18+
+- MySQL/MariaDB
+
+### Pasos
+```bash
+git clone <repo-url>
+cd ObraControl
+
+# Cambiar a la rama de entrega
+git checkout Segunda
+
+# Dependencias
+composer install
+npm install
+
+# Config
+cp .env.example .env
+php artisan key:generate
+
+# Migraciones
+php artisan migrate
+
+# Storage
+php artisan storage:link
+
+# Assets
+npm run build
+
+# Arrancar
+php artisan serve
+```
+
+---
+
+## Qué cambió respecto a la versión original
+
+Resumen (alto nivel):
+- **Seguridad**: la app es privada por defecto (landing pública `/` + resto protegido por `auth`).
+- **Roles y permisos**: `admin`, `usuario`, y `superadmin` con control de acceso en menú y rutas.
+- **Perfil**: pantalla de perfil con **foto de usuario** y atajos.
+- **Documentos**: módulo de documentos por usuario (subida/consulta/borrado) usando `storage`.
+- **Obras**: soporte para **PDF** asociado a una obra.
+- **Trabajadores**: foto del trabajador y mejoras de UI.
+- **Usuarios CRM** (solo superadmin): listado para gestión de usuarios y roles.
+- **Onboarding**: creación/vinculación usuario↔trabajador y flujo de cambio de contraseña cuando aplica.
+
+---
 
 # ClearTime - Sistema de Control de Obras y Fichajes
 

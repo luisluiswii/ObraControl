@@ -7,6 +7,20 @@ use Illuminate\Database\Eloquent\Collection;
 
 class FichajeRepository implements FichajeRepositoryInterface
 {
+    public function paginate($perPage = 10)
+    {
+        return Fichaje::with(['trabajador', 'obra'])
+            ->orderBy('id', 'desc')
+            ->paginate($perPage);
+    }
+
+    public function jornadasPaginate($perPage = 10)
+    {
+        return Fichaje::with(['trabajador', 'obra'])
+            ->orderBy('fecha', 'desc')
+            ->orderBy('hora_entrada', 'desc')
+            ->paginate($perPage);
+    }
     public function all(): Collection
     {
         return Fichaje::with(['trabajador', 'obra'])

@@ -8,7 +8,12 @@
 
 @section('content')
     <div class="ct-card">
-    <form action="{{ route('obras.store') }}" method="POST">
+    <form action="{{ route('obras.store') }}" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Adjuntar PDF <span class="text-muted">(opcional)</span></label>
+                    <input type="file" name="pdf" class="form-control-file" accept="application/pdf">
+                    <small class="form-text text-muted">Solo archivos PDF. Máx. 5MB.</small>
+                </div>
         @csrf
 
         <div class="mb-3">
@@ -40,7 +45,7 @@
             </select>
         </div>
 
-        <button class="btn btn-ct-success">Guardar</button>
+        <button class="btn btn-ct-success"><i class="fas fa-save ct-btn-icon" aria-hidden="true"></i>Guardar</button>
     </form>
     </div>
 @endsection

@@ -40,7 +40,7 @@
 
                 <div class="col-md-4 d-flex align-items-end">
                     <button class="btn btn-ct-success w-100">
-                        Iniciar jornada
+                        <i class="fas fa-play ct-btn-icon" aria-hidden="true"></i>Iniciar jornada
                     </button>
                 </div>
 
@@ -49,56 +49,44 @@
 
 </div>
 
-<a href="{{ route('fichajes.create') }}" class="btn btn-ct-primary mb-3">Nuevo Fichaje</a>
 
-<table class="table table-bordered table-striped ct-table">
-    <thead>
-        <tr>
-            <th>Trabajador</th>
-            <th>Obra</th>
-            <th>Fecha</th>
-            <th>Entrada</th>
-            <th>Salida</th>
-            <th>Horas</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @foreach ($fichajes as $f)
-            <tr>
-                <td>{{ $f->trabajador->nombre }} {{ $f->trabajador->apellido }}</td>
-                <td>{{ $f->obra->nombre }}</td>
-                <td>{{ $f->fecha }}</td>
-                <td>{{ $f->hora_entrada }}</td>
-                <td>{{ $f->hora_salida ?? '—' }}</td>
-                <td>{{ $f->horas_trabajadas ?? '—' }}</td>
-
-                <td>
-
-                    {{-- FINALIZAR JORNADA --}}
-                    @if(!$f->hora_salida)
-                        <form action="{{ route('jornadas.finalizar', $f->id) }}" method="POST" class="d-inline">
-                            @csrf
-                            <button class="btn btn-ct-warning btn-sm">
-                                Finalizar
-                            </button>
-                        </form>
-                    @endif
-
-                    {{-- ELIMINAR --}}
-                    <form action="{{ route('fichajes.destroy', $f->id) }}" method="POST" class="d-inline">
+<div class="ct-section-header mb-3">
+    <h2 class="ct-section-title">Listado de Fichajes</h2>
+    <a href="{{ route('fichajes.create') }}" class="btn btn-ct-success btn-lg shadow-sm"><i class="fas fa-plus ct-btn-icon" aria-hidden="true"></i>Nuevo Fichaje</a>
+</div>
+<div class="ct-grid ct-grid-2">
+    @foreach ($fichajes as $f)
+        <div class="ct-card d-flex flex-column justify-content-between p-4">
+            <div class="mb-2">
+                <div class="fw-bold fs-5">
+                    {{ optional($f->trabajador)?->nombre ?? '—' }} {{ optional($f->trabajador)?->apellido ?? '' }}
+                </div>
+                <div class="ct-muted fs-6 mb-1">Obra: {{ optional($f->obra)?->nombre ?? '—' }}</div>
+                <div class="mb-2">Fecha: {{ $f->fecha }}</div>
+            </div>
+            <div class="mb-2">
+                <span class="ct-pill ct-pill-ct me-2"><i class="fas fa-sign-in-alt"></i> {{ $f->hora_entrada }}</span>
+                <span class="ct-pill ct-pill-ct me-2"><i class="fas fa-sign-out-alt"></i> {{ $f->hora_salida ?? '—' }}</span>
+                <span class="ct-pill ct-pill-ct"><i class="fas fa-clock"></i> {{ $f->horas_trabajadas ?? '—' }}</span>
+            </div>
+            <div class="d-flex gap-2 align-items-center mt-auto">
+                @if(!$f->hora_salida)
+                    <form action="{{ route('jornadas.finalizar', $f->id) }}" method="POST" class="flex-fill" style="display:inline">
                         @csrf
-                        @method('DELETE')
-                        <button class="btn btn-ct-danger btn-sm">
-                            Eliminar
-                        </button>
+                        <button class="btn btn-ct-warning btn-lg w-100"><i class="fas fa-stop ct-btn-icon" aria-hidden="true"></i>Finalizar</button>
                     </form>
-
-                </td>
-            </tr>
-        @endforeach
-    </tbody>
-</table>
+                @endif
+                <form action="{{ route('fichajes.destroy', $f->id) }}" method="POST" class="flex-fill" style="display:inline">
+                    @csrf
+                    @method('DELETE')
+                    <button class="btn btn-ct-danger btn-lg w-100"><i class="fas fa-trash ct-btn-icon" aria-hidden="true"></i>Eliminar</button>
+                </form>
+            </div>
+        </div>
+    @endforeach
+</div>
+<div class="mt-4">
+    {{ $fichajes->links('vendor.pagination.default') }}
+</div>
 
 @endsection

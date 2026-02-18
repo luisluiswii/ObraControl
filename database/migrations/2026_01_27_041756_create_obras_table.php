@@ -15,6 +15,7 @@ return new class extends Migration
             $table->date('fecha_inicio');
             $table->date('fecha_fin')->nullable();
             $table->enum('estado', ['en curso', 'finalizada', 'pausada'])->default('en curso');
+            $table->string('pdf')->nullable(); // Ruta del PDF adjunto
             $table->timestamps();
             $table->softDeletes(); // ← BORRADO LÓGICO
         });

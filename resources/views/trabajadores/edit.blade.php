@@ -14,7 +14,7 @@
 
         @include('trabajadores.form')
 
-        <button class="btn btn-ct-success">Actualizar</button>
+        <button class="btn btn-ct-success"><i class="fas fa-save ct-btn-icon" aria-hidden="true"></i>Actualizar</button>
     </form>
     </div>
 @endsection

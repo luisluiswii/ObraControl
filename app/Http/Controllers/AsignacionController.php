@@ -14,10 +14,10 @@ class AsignacionController extends Controller
     ) {
     }
 
-    public function index()
+    public function index(\Illuminate\Http\Request $request)
     {
-        $asignaciones = $this->service->listar();
-
+        $perPage = $request->input('per_page', 10);
+        $asignaciones = $this->service->listar($perPage);
         return view('asignaciones.index', compact('asignaciones'));
     }
 

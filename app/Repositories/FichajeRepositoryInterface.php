@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface FichajeRepositoryInterface
 {
+    public function paginate($perPage = 10);
+    public function jornadasPaginate($perPage = 10);
     public function all(): Collection;
 
     public function abiertas(): Collection;

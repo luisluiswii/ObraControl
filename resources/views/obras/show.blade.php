@@ -15,6 +15,16 @@
             <p><strong>Fecha inicio:</strong> {{ $obra->fecha_inicio }}</p>
             <p><strong>Fecha fin:</strong> {{ $obra->fecha_fin ?? '—' }}</p>
             <p><strong>Estado:</strong> {{ $obra->estado }}</p>
+
+            @if($obra->pdf)
+                <p><strong>Documento PDF:</strong>
+                    <a href="{{ asset('storage/' . $obra->pdf) }}" target="_blank" class="btn btn-ct-secondary btn-sm ms-2">
+                        <i class="fas fa-file-pdf ct-btn-icon" aria-hidden="true"></i>Ver PDF
+                    </a>
+                </p>
+            @else
+                <p class="text-muted">No hay PDF adjunto.</p>
+            @endif
         </div>
     </div>
 

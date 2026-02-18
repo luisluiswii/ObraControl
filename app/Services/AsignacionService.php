@@ -12,9 +12,9 @@ class AsignacionService
     ) {
     }
 
-    public function listar(): Collection
+    public function listar($perPage = 10)
     {
-        return $this->repo->all();
+        return $this->repo->paginate($perPage);
     }
 
     public function crear(array $data): void

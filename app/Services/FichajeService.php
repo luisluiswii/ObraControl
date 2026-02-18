@@ -15,9 +15,9 @@ class FichajeService
     ) {
     }
 
-    public function listar(): Collection
+    public function listar($perPage = 10)
     {
-        return $this->repo->all();
+        return $this->repo->paginate($perPage);
     }
 
     public function abiertas(): Collection
@@ -104,9 +104,9 @@ class FichajeService
         return $this->repo->delete($fichaje);
     }
 
-    public function jornadas(): Collection
+    public function jornadas($perPage = 10)
     {
-        return $this->repo->jornadas();
+        return $this->repo->jornadasPaginate($perPage);
     }
 
     protected function calcularHoras(string $horaEntrada, ?string $horaSalida): ?float

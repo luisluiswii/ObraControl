@@ -24,8 +24,8 @@
     <tbody>
         @foreach ($jornadas as $j)
             <tr>
-                <td>{{ $j->trabajador->nombre }} {{ $j->trabajador->apellido }}</td>
-                <td>{{ $j->obra->nombre }}</td>
+                <td>{{ optional($j->trabajador)?->nombre ?? '—' }} {{ optional($j->trabajador)?->apellido ?? '' }}</td>
+                <td>{{ optional($j->obra)?->nombre ?? '—' }}</td>
                 <td>{{ $j->fecha }}</td>
                 <td>{{ $j->hora_entrada }}</td>
                 <td>{{ $j->hora_salida ?? '—' }}</td>
@@ -41,6 +41,11 @@
                 </td>
             </tr>
         @endforeach
+    </tbody>
+</table>
+<div class="mt-4">
+    {{ $jornadas->links('vendor.pagination.default') }}
+</div>
     </tbody>
 </table>
 

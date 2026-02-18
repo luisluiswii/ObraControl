@@ -19,18 +19,13 @@ class FichajeController extends Controller
     /**
      * Mostrar listado de fichajes + selects para iniciar jornada + jornadas abiertas
      */
-    public function index()
+    public function index(\Illuminate\Http\Request $request)
     {
-        // Todos los fichajes
-        $fichajes = $this->service->listar();
-
-        // Selects para iniciar jornada
+        $perPage = $request->input('per_page', 10);
+        $fichajes = $this->service->listar($perPage);
         $trabajadores = Trabajador::orderBy('nombre')->get();
         $obras = Obra::orderBy('nombre')->get();
-
-        // Jornadas abiertas ahora mismo
         $abiertas = $this->service->abiertas();
-
         return view('fichajes.index', compact('fichajes', 'trabajadores', 'obras', 'abiertas'));
     }
 
@@ -102,12 +97,11 @@ class FichajeController extends Controller
     /**
      * Panel de jornadas
      */
-    public function jornadas()
+    public function jornadas(\Illuminate\Http\Request $request)
     {
+        $perPage = $request->input('per_page', 10);
         $obras = Obra::orderBy('nombre')->get();
-
-        $jornadas = $this->service->jornadas();
-
+        $jornadas = $this->service->jornadas($perPage);
         return view('jornadas.index', compact('jornadas', 'obras'));
     }
 }

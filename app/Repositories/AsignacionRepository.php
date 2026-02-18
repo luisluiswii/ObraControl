@@ -7,6 +7,20 @@ use Illuminate\Support\Facades\DB;
 
 class AsignacionRepository implements AsignacionRepositoryInterface
 {
+    public function paginate($perPage = 10)
+    {
+        return DB::table('obra_trabajador')
+            ->join('obras', 'obras.id', '=', 'obra_trabajador.obra_id')
+            ->join('trabajadores', 'trabajadores.id', '=', 'obra_trabajador.trabajador_id')
+            ->select(
+                'obra_trabajador.*',
+                'obras.nombre as obra_nombre',
+                'trabajadores.nombre as trabajador_nombre',
+                'trabajadores.apellido as trabajador_apellido'
+            )
+            ->orderBy('obra_trabajador.id', 'desc')
+            ->paginate($perPage);
+    }
     public function all(): Collection
     {
         return DB::table('obra_trabajador')

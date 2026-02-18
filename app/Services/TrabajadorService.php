@@ -1,7 +1,3 @@
-    public function listarPaginado(int $perPage = 10)
-    {
-        return $this->repo->paginate($perPage);
-    }
 <?php
 
 namespace App\Services;
@@ -22,6 +18,11 @@ class TrabajadorService
         return $this->repo->all();
     }
 
+    public function listarPaginado(int $perPage = 10)
+    {
+        return $this->repo->paginate($perPage);
+    }
+
     public function crear(array $data): Trabajador
     {
         return $this->repo->create($data);
@@ -37,9 +38,9 @@ class TrabajadorService
         return $this->repo->delete($trabajador);
     }
 
-    public function listarPapelera(): Collection
+    public function listarPapelera($perPage = 10)
     {
-        return $this->repo->onlyTrashed();
+        return $this->repo->onlyTrashedPaginate($perPage);
     }
 
     public function restaurar(int $id): bool

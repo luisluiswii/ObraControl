@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Trabajador extends Model
 {
@@ -14,6 +15,7 @@ class Trabajador extends Model
     protected $table = 'trabajadores';
 
     protected $fillable = [
+        'user_id',
         'nombre',
         'apellido',
         'dni',
@@ -23,6 +25,11 @@ class Trabajador extends Model
         'salario_hora',
         'foto',
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     public function obras()
     {

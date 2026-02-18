@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Trabajador;
 use App\Services\TrabajadorService;
+use App\Services\TrabajadorUserSyncService;
 use App\Http\Requests\Trabajadores\StoreTrabajadorRequest;
 use App\Http\Requests\Trabajadores\UpdateTrabajadorRequest;
 
 class TrabajadorController extends Controller
 {
     public function __construct(
-        protected TrabajadorService $service
+        protected TrabajadorService $service,
+        protected TrabajadorUserSyncService $userSync
     ) {
     }
 
@@ -31,9 +33,16 @@ class TrabajadorController extends Controller
         if ($request->hasFile('foto')) {
             $data['foto'] = $request->file('foto')->store('trabajadores', 'public');
         }
-        $this->service->crear($data);
-        return redirect()->route('trabajadores.index')
-            ->with('success', 'Trabajador creado correctamente.');
+        $trabajador = $this->service->crear($data);
+
+        $sync = $this->userSync->ensureUserForTrabajador($trabajador);
+
+        $message = 'Trabajador creado correctamente.';
+        if (($sync['created'] ?? false) && isset($sync['password'])) {
+            $message .= ' Usuario creado (rol usuario). Contraseña inicial: ' . $sync['password'];
+        }
+
+        return redirect()->route('trabajadores.index')->with('success', $message);
     }
 
     public function edit(Trabajador $trabajador)
@@ -47,9 +56,20 @@ class TrabajadorController extends Controller
         if ($request->hasFile('foto')) {
             $data['foto'] = $request->file('foto')->store('trabajadores', 'public');
         }
-        $this->service->actualizar($trabajador, $data);
-        return redirect()->route('trabajadores.index')
-            ->with('success', 'Trabajador actualizado correctamente.');
+        $updated = $this->service->actualizar($trabajador, $data);
+
+        // Si no estaba vinculado aún, intenta vincular/crear.
+        $sync = $this->userSync->ensureUserForTrabajador($updated);
+
+        // Si ya está vinculado, sincroniza email.
+        $this->userSync->syncUserEmailFromTrabajador($updated);
+
+        $message = 'Trabajador actualizado correctamente.';
+        if (($sync['created'] ?? false) && isset($sync['password'])) {
+            $message .= ' Usuario creado (rol usuario). Contraseña inicial: ' . $sync['password'];
+        }
+
+        return redirect()->route('trabajadores.index')->with('success', $message);
     }
 
     public function destroy(Trabajador $trabajador)
@@ -59,10 +79,10 @@ class TrabajadorController extends Controller
             ->with('success', 'Trabajador eliminado.');
     }
 
-    public function papelera()
+    public function papelera(\Illuminate\Http\Request $request)
     {
-        $trabajadores = $this->service->listarPapelera();
-
+        $perPage = $request->input('per_page', 10);
+        $trabajadores = $this->service->listarPapelera($perPage);
         return view('trabajadores.papelera', compact('trabajadores'));
     }
 

@@ -13,18 +13,20 @@ class ObraService
     ) {
     }
 
-    public function listar(): Collection
+    public function listar($perPage = 10)
     {
-        return $this->repo->all();
+        return $this->repo->paginate($perPage);
     }
 
     public function crear(array $data): Obra
     {
+        // El controlador ya maneja el almacenamiento del PDF y pasa la ruta en $data['pdf'] si existe
         return $this->repo->create($data);
     }
 
     public function actualizar(Obra $obra, array $data): Obra
     {
+        // El controlador ya maneja el almacenamiento del PDF y pasa la ruta en $data['pdf'] si existe
         return $this->repo->update($obra, $data);
     }
 
@@ -33,9 +35,9 @@ class ObraService
         return $this->repo->delete($obra);
     }
 
-    public function listarPapelera(): Collection
+    public function listarPapelera($perPage = 10)
     {
-        return $this->repo->onlyTrashed();
+        return $this->repo->onlyTrashedPaginate($perPage);
     }
 
     public function restaurar(int $id): bool

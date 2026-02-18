@@ -19,6 +19,7 @@ class StoreObraRequest extends FormRequest
             'fecha_inicio' => 'required|date',
             'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
             'estado' => 'required|in:en curso,finalizada,pausada',
+            'pdf' => 'nullable|file|mimes:pdf|max:5120', // 5MB máximo
         ];
     }
 }

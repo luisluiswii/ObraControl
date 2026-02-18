@@ -16,6 +16,7 @@ class Obra extends Model
         'fecha_inicio',
         'fecha_fin',
         'estado',
+        'pdf', // Ruta del PDF adjunto
     ];
 
     /**

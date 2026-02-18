@@ -1,4 +1,3 @@
-    public function paginate($perPage = 10);
 <?php
 
 namespace App\Repositories;
@@ -8,7 +7,10 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface TrabajadorRepositoryInterface
 {
+    public function onlyTrashedPaginate($perPage = 10);
     public function all(): Collection;
+
+    public function paginate($perPage = 10);
 
     public function create(array $data): Trabajador;
 

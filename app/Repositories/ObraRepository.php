@@ -7,6 +7,15 @@ use Illuminate\Database\Eloquent\Collection;
 
 class ObraRepository implements ObraRepositoryInterface
 {
+    public function paginate($perPage = 10)
+    {
+        return Obra::orderBy('created_at', 'desc')->paginate($perPage);
+    }
+
+    public function onlyTrashedPaginate($perPage = 10)
+    {
+        return Obra::onlyTrashed()->orderBy('deleted_at', 'desc')->paginate($perPage);
+    }
     public function all(): Collection
     {
         return Obra::orderBy('created_at', 'desc')->get();
