@@ -3,9 +3,11 @@
 namespace Database\Seeders;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Models\User;
+use App\Models\Trabajador;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -18,12 +20,43 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // --- Cuentas demo para el profesor (3 roles) ---
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        $createOrUpdateUser = function (string $email, string $name, string $role, string $plainPassword): User {
+            /** @var User $user */
+            $user = User::query()->firstOrNew(['email' => $email]);
+            $user->name = $name;
+            $user->role = $role;
+            $user->must_change_password = false;
+            $user->password = Hash::make($plainPassword);
+            $user->save();
+            return $user;
+        };
+
+        $superadmin = $createOrUpdateUser('superadmin.cleartime@gmail.com', 'Super Admin', 'superadmin', 'SuperAdmin1234!');
+        $admin = $createOrUpdateUser('admin@example.com', 'Admin', 'admin', 'Admin1234!');
+        $usuario = $createOrUpdateUser('test@example.com', 'Test User', 'usuario', 'Usuario1234!');
+
+        // Asociar el usuario normal a un trabajador (para poder usar Mi Panel)
+        $existingTrabajador = Trabajador::withTrashed()->where('user_id', $usuario->id)->first();
+        if (! $existingTrabajador) {
+            $dni = 'TEST-' . str_pad((string) $usuario->id, 4, '0', STR_PAD_LEFT);
+            if (Trabajador::withTrashed()->where('dni', $dni)->exists()) {
+                $dni = $dni . '-' . bin2hex(random_bytes(2));
+            }
+
+            Trabajador::create([
+                'user_id' => $usuario->id,
+                'nombre' => 'Test',
+                'apellido' => 'User',
+                'dni' => $dni,
+                'telefono' => null,
+                'email' => $usuario->email,
+                'puesto' => 'Operario',
+                'salario_hora' => 10.00,
+                'foto' => null,
+            ]);
+        }
 
         $faker = \Faker\Factory::create('es_ES');
 

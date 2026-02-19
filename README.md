@@ -89,6 +89,23 @@ php artisan serve
 
 ---
 
+## Base de datos (lo que necesita el profesor)
+
+Recomendado (reproducible en cualquier PC):
+```bash
+php artisan migrate:fresh --seed
+```
+
+Esto crea:
+- Tablas y relaciones (migraciones)
+- Datos de ejemplo (seed)
+- Las 3 cuentas de acceso indicadas arriba (superadmin/admin/usuario)
+
+Opcional:
+- Existe un volcado [database_backup.sql](database_backup.sql) (snapshot). En caso de importarlo, se recomienda igualmente ejecutar `php artisan migrate` después para aplicar las últimas migraciones.
+
+---
+
 ## Qué cambió respecto a la versión original
 
 Resumen (alto nivel):
